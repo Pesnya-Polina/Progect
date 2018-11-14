@@ -3,6 +3,27 @@
 #include <sys/stat.h>
 #include <locale.h>
 #pragma warning(disable : 4996)
+char* ReadFile(char* poem);
+char** CreateBuf_CountStrings(char *poem, char **buf, int* count_strins);
+int CompareStrings(void *ptr1, void *ptr2);
+int SortAlph(char c);
+int CastomEncoding(char c);
+char** ChangeBuf(char **buf, int count_strings);
+void Print(char** buf, int count_strings);
+void FREE(char** buf, char* poem);
+int main()
+{
+	setlocale(LC_ALL, "");
+	int count_strings = 0;
+	char *poem = NULL;
+	poem = ReadFile(poem);
+	char** buf = NULL;
+	buf = CreateBuf_CountStrings(poem, buf, &count_strings);
+	buf = ChangeBuf(buf, count_strings);
+	Print(buf, count_strings);
+	FREE(buf, poem);
+	return 0;
+}
 char* ReadFile(char* poem)
 {
 	FILE *data = fopen("onegin.txt", "r");
@@ -16,9 +37,11 @@ char* ReadFile(char* poem)
 		exit(1);
 	}
 	fread(poem, sizeof(char), count_of_letters, data);
+	free(data);
+	data = NULL;
 	return poem;
 }
-char** CountStrings(char *poem, char **buf, int* count_strins)
+char** CreateBuf_CountStrings(char *poem, char **buf, int* count_strins)
 {
 	int i = 0, j = 0, size_buf = 1;
 	buf = (char**)calloc(1, sizeof(char*));
@@ -51,10 +74,6 @@ char** CountStrings(char *poem, char **buf, int* count_strins)
 	*count_strins = j;
 	return buf;
 }
-int CompareInts(void *a_ptr, void *b_ptr)
-{
-	return *((int*)a_ptr) - *((int*)b_ptr);
-}
 int CompareStrings(void *ptr1, void *ptr2)
 {
 	char *str1 = *((char**)ptr1);
@@ -81,7 +100,7 @@ int CastomEncoding(char c)
 	}
 	return 0;
 }
-char** CountAndChange(char **buf, int count_strings)
+char** ChangeBuf(char **buf, int count_strings)
 {
 	qsort(buf, count_strings, sizeof(char*), &CompareStrings);
 	return buf;
@@ -93,15 +112,11 @@ void Print(char** buf, int count_strings)
 		puts(buf[i]);
 	}
 }
-int main()
+void FREE(char** buf, char* poem)
 {
-	setlocale(LC_ALL, "");
-	int count_strings = 0;
-	char *poem = NULL;
-	poem = ReadFile(poem);
-	char** buf = NULL;
-	buf = CountStrings(poem, buf, &count_strings);
-	buf = CountAndChange(buf, count_strings);
-	Print(buf, count_strings);
-	return 0;
+	free(buf);
+	free(poem);
+	buf = NULL;
+	poem = NULL;
+	return;
 }
