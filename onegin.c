@@ -51,21 +51,6 @@ char** CountStrings(char *poem, char **buf, int* count_strins)
 	*count_strins = j;
 	return buf;
 }
-int main()
-{
-	setlocale(LC_ALL, "");
-	int count_strings = 0;
-	char *poem = NULL;
-	poem = ReadFile(poem);
-	char** buf = NULL;
-	buf = CountStrings(poem, buf, &count_strings);
-	for (int i = 0; i < count_strings; i++)
-	{
-		puts(buf[i]);
-	}
-	return 0;
-}
-/*
 int CompareInts(void *a_ptr, void *b_ptr)
 {
 	return *((int*)a_ptr) - *((int*)b_ptr);
@@ -74,11 +59,14 @@ int CompareStrings(void *ptr1, void *ptr2)
 {
 	char *str1 = *((char**)ptr1);
 	char *str2 = *((char**)ptr2);
-	while (!SortAlph(*str1)) str1++;
-	while (!SortAlph(*str2)) str2++;
-	if (SortAlph(*str1) != SortAlph(*str2)) return (SortAlph(*str1) - SortAlph(*str2));
-	str1++;
-	str2++;
+	while ((*str1 != '\0') || (*str2 != '\0'))
+	{
+		while (!SortAlph(*str1)) str1++;
+		while (!SortAlph(*str2)) str2++;
+		if (SortAlph(*str1) != SortAlph(*str2)) return (SortAlph(*str1) - SortAlph(*str2));
+		str1++;
+		str2++;
+	}
 }
 int SortAlph(char c)
 {
@@ -93,8 +81,27 @@ int CastomEncoding(char c)
 	}
 	return 0;
 }
-CountAndChange(char **buf)
+char** CountAndChange(char **buf, int count_strings)
 {
-	//qsort(buf, NLines, sizeof(char*), &CompareStrings);
+	qsort(buf, count_strings, sizeof(char*), &CompareStrings);
+	return buf;
 }
-*/
+void Print(char** buf, int count_strings)
+{
+	for (int i = 0; i < count_strings; i++)
+	{
+		puts(buf[i]);
+	}
+}
+int main()
+{
+	setlocale(LC_ALL, "");
+	int count_strings = 0;
+	char *poem = NULL;
+	poem = ReadFile(poem);
+	char** buf = NULL;
+	buf = CountStrings(poem, buf, &count_strings);
+	buf = CountAndChange(buf, count_strings);
+	Print(buf, count_strings);
+	return 0;
+}
